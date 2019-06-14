@@ -43,7 +43,7 @@ catkin_make --pkg dvo_core -DCMAKE_BUILD_TYPE=Release
 catkin_make --pkg dvo_ros -DCMAKE_BUILD_TYPE=Release
 catkin_make --pkg dvo_slam -DCMAKE_BUILD_TYPE=Release
 catkin make --pkg dvo_benchmark -DCMAKE_BUILD_TYPE=Release
-
+```
 
 ## Usage
 

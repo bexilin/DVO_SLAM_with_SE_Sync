@@ -1,3 +1,9 @@
 [submodule "SE-Sync/Optimization"]
 	path = SE-Sync/Optimization
 	url = https://github.com/david-m-rosen/Optimization.git
+[submodule "SE-Sync/Spectra"]
+	path = SE-Sync/Spectra
+	url = https://github.com/yixuan/spectra.git
+[submodule "SE-Sync/Eigen"]
+	path = SE-Sync/Eigen
+	url = https://github.com/eigenteam/eigen-git-mirror.git

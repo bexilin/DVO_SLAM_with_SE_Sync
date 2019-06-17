@@ -254,6 +254,44 @@ public:
       std::cerr << constraints.size() << " additional constraints" << std::endl;
     }
 
+    // include all edges in the optimization
+    if(cfg_.FinalOptimizationUseDenseGraph && !cfg_.OptimizationUseDenseGraph)
+    {
+      for(g2o::OptimizableGraph::EdgeSet::iterator e_it = keyframegraph_.edges().begin(); e_it != keyframegraph_.edges().end(); ++e_it)
+      {
+        g2o::EdgeSE3* e = (g2o::EdgeSE3*) (*e_it);
+        e->setLevel(0);
+      }
+    }
+
+    std::cerr << "optimizing..." << std::endl;
+
+    keyframegraph_.setVerbose(true);
+
+    int removed = 0, iterations = -1;
+    for(int idx = 0; idx < 10 && (iterations != 0 || removed != 0); ++idx)
+    {
+      keyframegraph_.initializeOptimization(0);
+      iterations = keyframegraph_.optimize(cfg_.FinalOptimizationIterations / 10);
+
+      if(cfg_.FinalOptimizationRemoveOutliers)
+      {
+        std::cerr << "remove outlier" << std::endl;
+        removed = removeOutlierConstraints(cfg_.FinalOptimizationOutlierWeightThreshold);
+      }
+    }
+
+    std::cerr << "done" << std::endl;
+
+    // update keyframe database
+    updateKeyframePosesFromGraph();
+
+    map_changed_(*me_);
+
+    ROS_WARN_STREAM("created validation tracker instances: " << validator_pool_.size());
+
+    std::cerr << keyframes_.size() << " keyframes" << std::endl;
+
     // Write vertex to .g2o file 
     std::ofstream g2o_file;
     g2o_file.open("/home/xi/vertex.g2o");
@@ -293,57 +331,8 @@ public:
           g2o_file<<edge_information(i,j)<<" ";
       g2o_file<<std::endl;
     }
-    /*for(std::vector<int>::iterator it = frame_no.begin();it!=frame_no.end();++it)
-    {
-      g2o::VertexSE3 *iter = (g2o::VertexSE3 *) keyframegraph_.vertex(*it);
-      g2o_file << "VERTEX_SE3:QUAT" << " " << iter->id() << " ";
-      iter->getEstimateData(vertex_pose);
-      for(size_t i=0;i<7;++i)
-      {
-        g2o_file<<vertex_pose[i]<<" ";
-      }
-      g2o_file<<std::endl;
-    }*/
     g2o_file.close();
     std::cout<<"finish writing .g2o file"<<std::endl;
-    
-
-    // include all edges in the optimization
-    if(cfg_.FinalOptimizationUseDenseGraph && !cfg_.OptimizationUseDenseGraph)
-    {
-      for(g2o::OptimizableGraph::EdgeSet::iterator e_it = keyframegraph_.edges().begin(); e_it != keyframegraph_.edges().end(); ++e_it)
-      {
-        g2o::EdgeSE3* e = (g2o::EdgeSE3*) (*e_it);
-        e->setLevel(0);
-      }
-    }
-
-    std::cerr << "optimizing..." << std::endl;
-
-    keyframegraph_.setVerbose(true);
-
-    int removed = 0, iterations = -1;
-    for(int idx = 0; idx < 10 && (iterations != 0 || removed != 0); ++idx)
-    {
-      keyframegraph_.initializeOptimization(0);
-      iterations = keyframegraph_.optimize(cfg_.FinalOptimizationIterations / 10);
-
-      if(cfg_.FinalOptimizationRemoveOutliers)
-      {
-        removed = removeOutlierConstraints(cfg_.FinalOptimizationOutlierWeightThreshold);
-      }
-    }
-
-    std::cerr << "done" << std::endl;
-
-    // update keyframe database
-    updateKeyframePosesFromGraph();
-
-    map_changed_(*me_);
-
-    ROS_WARN_STREAM("created validation tracker instances: " << validator_pool_.size());
-
-    std::cerr << keyframes_.size() << " keyframes" << std::endl;
   }
 
   void optimizeInterKeyframePoses()

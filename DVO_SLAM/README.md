@@ -26,15 +26,24 @@ These packages provide an implementation of the rigid body motion estimation of 
     
 
 ## Installation
+This part of code originated from kinetic-devel branch from DVO SLAM repository (https://github.com/tum-vision/dvo_slam/tree/kinetic-devel), with some modifications so that it can work with SE-Sync. It works on ubuntu 16.04 LTS and ROS Kinetic, and uses catkin to build the code. 
 
-Checkout the branch for your ROS version into a folder in your `ROS_PACKAGE_PATH` and build the packages with `rosmake`.
+NOTE: compilation problem appears when cmake version is 3.14. Compilation succeeds with cmake version 3.10.
 
- *  ROS Fuerte:
-    
-    ```bash
-    git clone -b fuerte git://github.com/tum-vision/dvo_slam.git
-    rosmake dvo_core dvo_ros dvo_slam dvo_benchmark
-    ```
+To build this part of code, you should initialize a catkin workspace first, and put packages dvo_core, dvo_ros, dvo_slam, and dvo_benchmark under directory src. Then go back to Catkin workspace's root folder and execute  
+
+```
+catkin_make -DCMAKE_BUILD_TYPE=Release
+```
+
+to build all packages. You can also build each package separately by 
+
+```
+catkin_make --pkg dvo_core -DCMAKE_BUILD_TYPE=Release
+catkin_make --pkg dvo_ros -DCMAKE_BUILD_TYPE=Release
+catkin_make --pkg dvo_slam -DCMAKE_BUILD_TYPE=Release
+catkin make --pkg dvo_benchmark -DCMAKE_BUILD_TYPE=Release
+```
 
 ## Usage
 

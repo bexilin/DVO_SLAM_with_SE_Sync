@@ -163,8 +163,6 @@ BenchmarkNode::BenchmarkNode(ros::NodeHandle& nh, ros::NodeHandle& nh_private) :
 bool BenchmarkNode::configure()
 {
   // dataset files related stuff
-  //cfg_.RgbdPairFile = "~/TUM/rgbd_freiburg1_room/assoc.txt";
-  //std::cout<<cfg_.RgbdPairFile<<std::endl;
   if(nh_private_.getParam("rgbdpair_file", cfg_.RgbdPairFile))
   {
     rgbdpair_reader_ = new dvo_benchmark::FileReader<dvo_benchmark::RgbdPair>(cfg_.RgbdPairFile);
@@ -426,9 +424,6 @@ void BenchmarkNode::run()
   // initialize first pose
   Eigen::Affine3d trajectory, relative;
 
-  // timestamp recorder
-  std::vector<ros::Time> timestamp_recorder;
-
   if(groundtruth_reader_ != 0)
   {
     dvo_benchmark::findClosestEntry(*groundtruth_reader_, rgbdpair_reader_->entry().RgbTimestamp());
@@ -497,7 +492,6 @@ void BenchmarkNode::run()
 
       if(cfg_.EstimateTrajectory)
       {
-        timestamp_recorder.push_back(it->RgbTimestamp());
         Eigen::Quaterniond q(trajectory.rotation());
 
         (*trajectory_out_)
@@ -536,15 +530,6 @@ void BenchmarkNode::run()
   //std::cerr << "input:" << std::endl;
   //std::string tmp;
   //std::cin >> tmp;
-
-  std::ofstream timestamp_file;
-  timestamp_file.open("/home/xi/timestamp.txt");
-  for(std::vector<ros::Time>::iterator it = timestamp_recorder.begin();it != timestamp_recorder.end();++it)
-  {
-    timestamp_file << *it << std::endl;
-  }
-  timestamp_file.close();
-  std::cout<<"finish writing timestamp file"<<std::endl;
 
   sw_postprocess.start();
   if(dynreconfg_slam_cfg.graph_opt_final)

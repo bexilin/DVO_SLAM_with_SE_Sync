@@ -8,9 +8,9 @@ find_package(catkin REQUIRED COMPONENTS roscpp dynamic_reconfigure dvo_core dvo_
 find_package(cmake_modules REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(G2O REQUIRED)
-find_package(sophus REQUIRED)
-find_package(Boost REQUIRED thread)
-find_package(OpenCV REQUIRED)
+#find_package(sophus REQUIRED)
+#find_package(Boost REQUIRED thread)
+#find_package(OpenCV REQUIRED)
 find_package(TBB REQUIRED)
 
 LIST(APPEND CMAKE_CXX_FLAGS "-std=c++11")

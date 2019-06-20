@@ -427,7 +427,7 @@ SESyncResult SESync(SESyncProblem &problem, const SESyncOpts &options,
   // Round solution
   auto rounding_start_time = Stopwatch::tick();
   // Recover the complete pose matrix X = [t | R]
-  SESyncResults.xhat = problem.round_solution(SESyncResults.Yopt,SESyncResults.pose_quaternion,SESyncResults.pose_translation);
+  SESyncResults.xhat = problem.round_solution(SESyncResults.Yopt,SESyncResults.pose_rotation,SESyncResults.pose_translation);
 
   double rounding_elapsed_time = Stopwatch::tock(rounding_start_time);
 

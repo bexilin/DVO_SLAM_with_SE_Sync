@@ -153,7 +153,7 @@ enum SESyncStatus {
 struct SESyncResult {
 
   // create a vector that stores pose quaterniond and a matrix that stores pose translation
-  std::map<size_t,Eigen::Quaterniond> pose_quaternion;
+  Matrix pose_rotation;
   Matrix pose_translation;
 
   /** An estimate of a global minimizer Yopt of the rank-restricted dual

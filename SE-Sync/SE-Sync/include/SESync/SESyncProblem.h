@@ -301,7 +301,7 @@ public:
    * optimization problem, this function computes and returns a matrix X = [t |
    * R] comprised of translations and rotations for a set of feasible poses for
    * the original estimation problem obtained by rounding the point Y */
-  Matrix round_solution(const Matrix Y, std::map<size_t,Eigen::Quaterniond>&, Matrix&) const;
+  Matrix round_solution(const Matrix Y, Matrix&, Matrix&) const;
 
   /** Given a critical point Y of the rank-r relaxation of the SE-Sync
    * optimization problem, this function computes and returns a d x dn matrix

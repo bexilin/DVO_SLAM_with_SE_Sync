@@ -11,12 +11,17 @@ using namespace std;
 using namespace SESync;
 
 bool write_poses = true;
+bool global = true;
 
 int main(int argc, char **argv) {
   ifstream timestamp_file;
   if (argc == 1) {
     cout << "Usage: " << argv[0] << " [input .g2o and timestamp.txt file]" << endl;
     exit(1);
+  }
+  else if(argc == 2) {
+    timestamp_file.close();
+    global = false;
   }
   else if(argc == 3) {
     timestamp_file.open(argv[2]);
@@ -59,23 +64,37 @@ int main(int argc, char **argv) {
 
   if (write_poses) {
     // Write output
-    string filename = "poses.txt";
+    string filename = "/home/xi/SE-Sync/C++/build/bin/poses_traj.txt";
     cout << "Saving final poses to file: " << filename << endl;
     ofstream poses_file(filename);
     string timestamp;
-    //poses_file << results.xhat;
     for(size_t j = 0; j<results.pose_translation.cols(); ++j)
     {
-      getline(timestamp_file,timestamp);
-      poses_file << timestamp << " ";
+      if(global){
+        getline(timestamp_file,timestamp);
+        poses_file << timestamp << " ";
+      }
       for(size_t i = 0; i<results.pose_translation.rows();++i)
         poses_file << results.pose_translation(i,j) << " ";
-      poses_file << results.pose_quaternion[j].x() << " ";
+      /*poses_file << results.pose_quaternion[j].x() << " ";
       poses_file << results.pose_quaternion[j].y() << " ";
       poses_file << results.pose_quaternion[j].z() << " ";
-      poses_file << results.pose_quaternion[j].w() << " ";
+      poses_file << results.pose_quaternion[j].w() << " ";*/
+      Eigen::Matrix3d m = results.pose_rotation.block(0,3*j,3,3);
+      Eigen::Quaterniond q(m);
+      q.normalize();
+      /*for(size_t r = 0; r < m.rows(); ++r)
+        for(size_t c = 0; c < m.cols(); ++c)
+          poses_file << m(r,c) << " ";*/
+      //poses_file << m.rows() << " X " << m.cols();
+      poses_file << q.x() << " " << q.y() << " " << q.z() << " " << q.w();
       poses_file << std::endl;
     }
     poses_file.close();
+    string filename2 = "/home/xi/SE-Sync/C++/build/bin/poses_xhat.txt";
+    cout << "Saving final poses to file: " << filename2 << endl;
+    ofstream poses_file2(filename2);
+    poses_file2 << results.xhat;
+    poses_file2.close();
   }
 }

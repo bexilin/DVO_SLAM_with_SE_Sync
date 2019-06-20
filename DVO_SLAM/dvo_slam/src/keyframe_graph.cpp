@@ -62,6 +62,8 @@
 #include <interactive_markers/interactive_marker_server.h>
 #include <visualization_msgs/InteractiveMarker.h>
 
+#include <stdlib.h>
+
 using namespace dvo_slam::constraints;
 
 namespace dvo_slam
@@ -254,6 +256,60 @@ public:
       std::cerr << constraints.size() << " additional constraints" << std::endl;
     }
 
+    /*// Write vertex to .g2o file 
+    std::ofstream g2o_file;
+    g2o_file.open("/home/xi/vertex.g2o");
+    double vertex_pose[7];
+    double edge_pose[7];
+    g2o::EdgeSE3::InformationType edge_information;
+    for(g2o::OptimizableGraph::VertexIDMap::iterator iter = keyframegraph_.vertices().begin(); iter != keyframegraph_.vertices().end(); ++iter)
+    {
+      g2o::VertexSE3 *it = (g2o::VertexSE3 *) iter->second;
+      //if(iter->first > FirstOdometryId) g2o_file << "VERTEX_SE3:QUAT" << " " << iter->first - FirstOdometryId << " ";
+      //else g2o_file << "VERTEX_SE3:QUAT" << " " << keyframe_id_map[iter->first] << " ";
+      g2o_file << "VERTEX_SE3:QUAT" << " " << (iter->first > FirstOdometryId ? iter->first - FirstOdometryId : keyframe_id_map[iter->first] ) << " ";
+      it->getEstimateData(vertex_pose);
+      for(size_t i=0;i<7;++i)
+      {
+        g2o_file<<vertex_pose[i]<<" ";
+      }
+      g2o_file<<std::endl;
+    }
+    g2o_file<<std::endl;
+    for(g2o::OptimizableGraph::EdgeSet::iterator iter = keyframegraph_.edges().begin(); iter != keyframegraph_.edges().end(); ++iter)
+    {
+      g2o::EdgeSE3* it = (g2o::EdgeSE3*) (*iter);
+      g2o_file << "EDGE_SE3:QUAT" << " ";
+      for(g2o::HyperGraph::VertexContainer::iterator i = (it->vertices()).begin(); i != (it->vertices()).end(); ++i)
+      {
+        g2o_file << ((*i)->id() > FirstOdometryId ? (*i)->id() - FirstOdometryId : keyframe_id_map[(*i)->id()] ) << " ";
+      }
+      it->getMeasurementData(edge_pose);
+      for(size_t i=0;i<7;++i)
+      {
+        g2o_file<<edge_pose[i]<<" ";
+      }
+      edge_information = it->information();
+      for(size_t i=0;i<edge_information.rows();++i)
+        for(size_t j=i;j<edge_information.cols();++j)
+          g2o_file<<edge_information(i,j)<<" ";
+      g2o_file<<std::endl;
+    }
+    /*for(std::vector<int>::iterator it = frame_no.begin();it!=frame_no.end();++it)
+    {
+      g2o::VertexSE3 *iter = (g2o::VertexSE3 *) keyframegraph_.vertex(*it);
+      g2o_file << "VERTEX_SE3:QUAT" << " " << iter->id() << " ";
+      iter->getEstimateData(vertex_pose);
+      for(size_t i=0;i<7;++i)
+      {
+        g2o_file<<vertex_pose[i]<<" ";
+      }
+      g2o_file<<std::endl;
+    }*/
+    //g2o_file.close();
+    //std::cout<<"finish writing .g2o file"<<std::endl;
+    
+
     // include all edges in the optimization
     if(cfg_.FinalOptimizationUseDenseGraph && !cfg_.OptimizationUseDenseGraph)
     {
@@ -331,8 +387,20 @@ public:
           g2o_file<<edge_information(i,j)<<" ";
       g2o_file<<std::endl;
     }
+    /*for(std::vector<int>::iterator it = frame_no.begin();it!=frame_no.end();++it)
+    {
+      g2o::VertexSE3 *iter = (g2o::VertexSE3 *) keyframegraph_.vertex(*it);
+      g2o_file << "VERTEX_SE3:QUAT" << " " << iter->id() << " ";
+      iter->getEstimateData(vertex_pose);
+      for(size_t i=0;i<7;++i)
+      {
+        g2o_file<<vertex_pose[i]<<" ";
+      }
+      g2o_file<<std::endl;
+    }*/
     g2o_file.close();
     std::cout<<"finish writing .g2o file"<<std::endl;
+
   }
 
   void optimizeInterKeyframePoses()
@@ -811,6 +879,135 @@ private:
 
     m->optimize();
     g2o::SparseOptimizer &g = m->getGraph();
+
+     // Write vertex to .g2o file
+    //if (keyframes_.size())
+    if (g.vertices().size())
+    {
+      std::cout << std::endl << std::endl << std::endl << std::endl;
+      std::cout << "current local map number:" << keyframes_.size()+1 << std::endl;
+
+      std::ofstream g2o_file;
+      g2o_file.open("/home/xi/vertex_local.g2o");
+      double vertex_pose[7];
+      double edge_pose[7];
+
+      //record the pose of first frame in this vector and construct its SE3quat;
+      //g2o::Vector7d v1_vector;
+      //g2o::SE3Quat v1;
+
+      g2o::EdgeSE3::InformationType edge_information;
+      for(g2o::OptimizableGraph::VertexIDMap::iterator iter = g.vertices().begin(); iter != g.vertices().end(); ++iter)
+      {
+        g2o::VertexSE3 *it = (g2o::VertexSE3 *) iter->second;
+        //g2o_file << "VERTEX_SE3:QUAT" << " " << (iter->first > FirstOdometryId ? iter->first - FirstOdometryId : keyframe_id_map[iter->first] ) << " ";
+        g2o_file << "VERTEX_SE3:QUAT" << " " << iter->first - 1 << " ";
+        it->getEstimateData(vertex_pose);
+        
+        //record v1 here
+        /*if(iter->first == 1)
+        {
+          /*for(size_t i=0;i<7;++i)
+          {
+            v1_vector[i] = vertex_pose[i];
+          }
+          v1.fromVector(v1_vector);
+        }*/
+
+        for(size_t i=0;i<7;++i)
+        {
+          g2o_file<<vertex_pose[i]<<" ";
+        }
+        g2o_file<<std::endl;
+      }
+      g2o_file<<std::endl;
+      for(g2o::OptimizableGraph::EdgeSet::iterator iter = g.edges().begin(); iter != g.edges().end(); ++iter)
+      {
+        g2o::EdgeSE3* it = (g2o::EdgeSE3*) (*iter);
+        g2o_file << "EDGE_SE3:QUAT" << " ";
+        for(g2o::HyperGraph::VertexContainer::iterator i = (it->vertices()).begin(); i != (it->vertices()).end(); ++i)
+        {
+          //g2o_file << ((*i)->id() > FirstOdometryId ? (*i)->id() - FirstOdometryId : keyframe_id_map[(*i)->id()] ) << " ";
+          g2o_file << (*i)->id() - 1 << " ";
+        }
+        it->getMeasurementData(edge_pose);
+        for(size_t i=0;i<7;++i)
+        {
+          g2o_file<<edge_pose[i]<<" ";
+        }
+        edge_information = it->information();
+        for(size_t i=0;i<edge_information.rows();++i)
+          for(size_t j=i;j<edge_information.cols();++j)
+            g2o_file<<edge_information(i,j)<<" ";
+        g2o_file<<std::endl;
+      }
+      g2o_file.close();
+      std::cout<<"finish writing .g2o file"<<std::endl;
+
+      // Call SE-Sync to optimize local map
+      system("/home/xi/SE-Sync/C++/build/bin/SE-Sync /home/xi/vertex_local.g2o");
+
+      // reset estimate value of vertices
+      std::cout<<"start reseting estimate value"<<std::endl;
+      std::ifstream pose_file;
+      std::string line;
+      int line_num = 1;
+      double vertex_pose_opt[7];
+      //g2o::SE3Quat est;
+      //g2o::SE3Quat trans;
+      //Eigen::Isometry3d vp;
+      g2o::VertexSE3* v;
+      Eigen::Affine3d pose_opt;
+      Eigen::Affine3d trans;
+      //g2o::VertexSE3* v1 = (g2o::VertexSE3*) (g.vertices())[1];
+
+      double check[7];
+
+      pose_file.open("/home/xi/SE-Sync/C++/build/bin/poses_traj.txt");
+      std::cout<<"start circulation"<<std::endl;
+      while(line_num <= g.vertices().size()){
+        getline(pose_file, line);
+        std::stringstream s(line);
+        for(size_t i=0;i<7;++i){
+          s >> vertex_pose_opt[i];
+          //std::cout << vertex_pose_opt[i] << " ";
+        }
+        //std::cout << std::endl;
+        /*vp = Eigen::Isometry3d::Identity();
+        vp.rotate(Eigen::Quaterniond(vertex_pose_opt[6],vertex_pose_opt[3],vertex_pose_opt[4],vertex_pose_opt[5]));
+        vp.pretranslate(Eigen::Vector3d(vertex_pose_opt[0],vertex_pose_opt[1],vertex_pose_opt[2]));*/
+        v = (g2o::VertexSE3*) (g.vertices())[line_num];
+        //est.fromVector(vertex_pose_opt);
+
+        Eigen::Affine3d r(Eigen::Quaterniond(vertex_pose_opt[6],vertex_pose_opt[3],vertex_pose_opt[4],vertex_pose_opt[5]));
+        Eigen::Affine3d t(Eigen::Translation3d(Eigen::Vector3d(vertex_pose_opt[0],vertex_pose_opt[1],vertex_pose_opt[2])));
+        pose_opt = t * r;
+
+        if (line_num == 1) {
+          trans = pose_opt.inverse() * v->estimate();
+        }
+
+        /*check = est.toVector();
+        for(size_t i=0;i<7;++i){
+          std::cout << check[i] << " ";
+        }
+        std::cout << std::endl;*/
+        
+        v->setEstimate(internal::toIsometry(pose_opt * trans));
+        v->getEstimateData(check);
+        for(size_t i=0;i<7;++i)
+        {
+          std::cout<<check[i]<<" ";
+        }
+        std::cout<<std::endl;
+
+        line_num++;
+      }
+      pose_file.close();
+
+    }
+
+
 
     int max_id = g.vertices().size();
 

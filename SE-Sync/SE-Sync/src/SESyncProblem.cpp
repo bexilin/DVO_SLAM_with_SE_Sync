@@ -255,7 +255,7 @@ Matrix SESyncProblem::retract(const Matrix &Y, const Matrix &dotY) const {
   }
 }
 
-Matrix SESyncProblem::round_solution(const Matrix Y, std::map<size_t,Eigen::Quaterniond> &pose_quaternion , Matrix &pose_translation) const {
+Matrix SESyncProblem::round_solution(const Matrix Y, Matrix &pose_rotation , Matrix &pose_translation) const {
 
   // First, compute a thin SVD of Y
   Eigen::JacobiSVD<Matrix> svd(Y, Eigen::ComputeThinV);
@@ -302,9 +302,11 @@ Matrix SESyncProblem::round_solution(const Matrix Y, std::map<size_t,Eigen::Quat
   {
     R.block(0, rot_offset + i * d_, d_, d_) =
         project_to_SOd(R.block(0, rot_offset + i * d_, d_, d_));
-    Eigen::Matrix3d R_single = R.block(0, rot_offset + i * d_, d_, d_);
-    pose_quaternion.insert(std::pair<size_t,Eigen::Quaterniond>(i,Eigen::Quaterniond(R_single)));
-  }  
+    //Eigen::Matrix3d R_single = R.block(0, rot_offset + i * d_, d_, d_);
+    //Eigen::Quaterniond R_single_quat(R_single);
+    //pose_quaternion.insert(std::pair<size_t,Eigen::Quaterniond>(i,R_single_quat.normalized()));
+    //pose_rotation.insert(std::pair<size_t,Matrix>(i,R.block(0, rot_offset + i * d_, d_, d_)));
+  }
 
   if (form_ == Formulation::Explicit)
     return R;
@@ -315,6 +317,7 @@ Matrix SESyncProblem::round_solution(const Matrix Y, std::map<size_t,Eigen::Quat
 
     // Set rotational states
     X.block(0, n_, d_, d_ * n_) = R;
+    pose_rotation = R;
 
     // Recover translational states
     X.block(0, 0, d_, n_) = recover_translations(B1_, B2_, R);

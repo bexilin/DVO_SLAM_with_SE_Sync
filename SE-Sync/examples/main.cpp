@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
   }
 
   SESyncOpts opts;
-  opts.verbose = true; // Print output to stdout
+  opts.verbose = false; // Print output to stdout
   opts.num_threads = 4;
 
 #ifdef GPERFTOOLS
@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
   if (write_poses) {
     // Write output
     string filename = "/home/xi/SE-Sync/C++/build/bin/poses_traj.txt";
-    cout << "Saving final poses to file: " << filename << endl;
+    //cout << "Saving final poses to file: " << filename << endl;
     ofstream poses_file(filename);
     string timestamp;
     for(size_t j = 0; j<results.pose_translation.cols(); ++j)
@@ -92,7 +92,7 @@ int main(int argc, char **argv) {
     }
     poses_file.close();
     string filename2 = "/home/xi/SE-Sync/C++/build/bin/poses_xhat.txt";
-    cout << "Saving final poses to file: " << filename2 << endl;
+    //cout << "Saving final poses to file: " << filename2 << endl;
     ofstream poses_file2(filename2);
     poses_file2 << results.xhat;
     poses_file2.close();

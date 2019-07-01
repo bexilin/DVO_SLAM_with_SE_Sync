@@ -53,7 +53,7 @@ source devel/setup.sh
 
 This will make ROS able to find our newly built packages. 
 
-Now we can navigate to example folder and execute
+Now we can navigate to dvo_benchmark folder and execute
 
 ```
 roslaunch launch/benchmark.launch dataset:=<RGBD dataset folder>

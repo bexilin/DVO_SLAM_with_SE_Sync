@@ -63,6 +63,7 @@
 #include <visualization_msgs/InteractiveMarker.h>
 
 #include <stdlib.h>
+#include <chrono>
 
 using namespace dvo_slam::constraints;
 
@@ -255,61 +256,7 @@ public:
       insertNewKeyframeConstraints(constraints);
       std::cerr << constraints.size() << " additional constraints" << std::endl;
     }
-
-    /*// Write vertex to .g2o file 
-    std::ofstream g2o_file;
-    g2o_file.open("/home/xi/vertex.g2o");
-    double vertex_pose[7];
-    double edge_pose[7];
-    g2o::EdgeSE3::InformationType edge_information;
-    for(g2o::OptimizableGraph::VertexIDMap::iterator iter = keyframegraph_.vertices().begin(); iter != keyframegraph_.vertices().end(); ++iter)
-    {
-      g2o::VertexSE3 *it = (g2o::VertexSE3 *) iter->second;
-      //if(iter->first > FirstOdometryId) g2o_file << "VERTEX_SE3:QUAT" << " " << iter->first - FirstOdometryId << " ";
-      //else g2o_file << "VERTEX_SE3:QUAT" << " " << keyframe_id_map[iter->first] << " ";
-      g2o_file << "VERTEX_SE3:QUAT" << " " << (iter->first > FirstOdometryId ? iter->first - FirstOdometryId : keyframe_id_map[iter->first] ) << " ";
-      it->getEstimateData(vertex_pose);
-      for(size_t i=0;i<7;++i)
-      {
-        g2o_file<<vertex_pose[i]<<" ";
-      }
-      g2o_file<<std::endl;
-    }
-    g2o_file<<std::endl;
-    for(g2o::OptimizableGraph::EdgeSet::iterator iter = keyframegraph_.edges().begin(); iter != keyframegraph_.edges().end(); ++iter)
-    {
-      g2o::EdgeSE3* it = (g2o::EdgeSE3*) (*iter);
-      g2o_file << "EDGE_SE3:QUAT" << " ";
-      for(g2o::HyperGraph::VertexContainer::iterator i = (it->vertices()).begin(); i != (it->vertices()).end(); ++i)
-      {
-        g2o_file << ((*i)->id() > FirstOdometryId ? (*i)->id() - FirstOdometryId : keyframe_id_map[(*i)->id()] ) << " ";
-      }
-      it->getMeasurementData(edge_pose);
-      for(size_t i=0;i<7;++i)
-      {
-        g2o_file<<edge_pose[i]<<" ";
-      }
-      edge_information = it->information();
-      for(size_t i=0;i<edge_information.rows();++i)
-        for(size_t j=i;j<edge_information.cols();++j)
-          g2o_file<<edge_information(i,j)<<" ";
-      g2o_file<<std::endl;
-    }
-    /*for(std::vector<int>::iterator it = frame_no.begin();it!=frame_no.end();++it)
-    {
-      g2o::VertexSE3 *iter = (g2o::VertexSE3 *) keyframegraph_.vertex(*it);
-      g2o_file << "VERTEX_SE3:QUAT" << " " << iter->id() << " ";
-      iter->getEstimateData(vertex_pose);
-      for(size_t i=0;i<7;++i)
-      {
-        g2o_file<<vertex_pose[i]<<" ";
-      }
-      g2o_file<<std::endl;
-    }*/
-    //g2o_file.close();
-    //std::cout<<"finish writing .g2o file"<<std::endl;
     
-
     // include all edges in the optimization
     if(cfg_.FinalOptimizationUseDenseGraph && !cfg_.OptimizationUseDenseGraph)
     {
@@ -324,13 +271,14 @@ public:
 
     keyframegraph_.setVerbose(true);
 
-    int removed = 0, iterations = -1;
+    int removed = 1, iterations = -1;
     for(int idx = 0; idx < 10 && (iterations != 0 || removed != 0); ++idx)
     //for(int idx = 0; idx < 10 && removed != 0; ++idx)
     {
       keyframegraph_.initializeOptimization(0);
       iterations = keyframegraph_.optimize(cfg_.FinalOptimizationIterations / 10);
-      //SE_Sync_global();
+      std::cout << "final iteration number: " << idx + 1 << std::endl;
+      //SE_Sync_global_kf();
 
       if(cfg_.FinalOptimizationRemoveOutliers)
       {
@@ -338,6 +286,14 @@ public:
         removed = removeOutlierConstraints(cfg_.FinalOptimizationOutlierWeightThreshold);
       }
     }
+
+    /*if(cfg_.FinalOptimizationRemoveOutliers)
+    {
+      std::cerr << "remove outlier" << std::endl;
+      int removed = removeOutlierConstraints(cfg_.FinalOptimizationOutlierWeightThreshold);
+    }*/
+
+    SE_Sync_global();
 
     std::cerr << "done" << std::endl;
 
@@ -351,7 +307,7 @@ public:
     std::cerr << keyframes_.size() << " keyframes" << std::endl;
 
     // Write vertex to .g2o file 
-    std::ofstream g2o_file;
+    /*std::ofstream g2o_file;
     g2o_file.open("/home/xi/vertex.g2o");
     double vertex_pose[7];
     double edge_pose[7];
@@ -400,7 +356,7 @@ public:
       }
       g2o_file<<std::endl;
     }*/
-    g2o_file.close();
+    /*g2o_file.close();
     std::cout<<"finish writing .g2o file"<<std::endl;
 
     system("/home/xi/SE-Sync/C++/build/bin/SE-Sync /home/xi/vertex.g2o");
@@ -436,7 +392,7 @@ public:
       vp.pretranslate(Eigen::Vector3d(vertex_pose_opt[0],vertex_pose_opt[1],vertex_pose_opt[2]));*/
       //v = (g2o::VertexSE3*) (g.vertices())[line_num];
       //est.fromVector(vertex_pose_opt);
-      getline(timestamp_file, line);
+      /*getline(timestamp_file, line);
       trajectory_file << line << " ";
 
       Eigen::Affine3d r(Eigen::Quaterniond(vertex_pose_opt[6],vertex_pose_opt[3],vertex_pose_opt[4],vertex_pose_opt[5]));
@@ -455,7 +411,7 @@ public:
       }
       std::cout << std::endl;*/
       
-      v->setEstimate(internal::toIsometry(trans * pose_opt));
+      /*v->setEstimate(internal::toIsometry(trans * pose_opt));
       v->getEstimateData(check);
       for(size_t i=0;i<7;++i)
       {
@@ -467,7 +423,7 @@ public:
 
       line_num++;
     }
-    pose_file.close();
+    pose_file.close();*/
 
   }
 
@@ -505,10 +461,10 @@ public:
         }
       }
 
-      keyframegraph_.setVerbose(false);
+      //keyframegraph_.setVerbose(false);
       //keyframegraph_.initializeOptimization(inter_keyframe_vertices, 2);
       //keyframegraph_.optimize(20);
-      SE_Sync_global();
+      SE_Sync_global_kf();
     }
   }
 
@@ -652,12 +608,18 @@ private:
 
     if(max_distance >= cfg_.MinConstraintDistance)
     {
+      int iteration;
       sw_opt.start();
       // optimize
       //keyframegraph_.initializeOptimization();
-      //keyframegraph_.optimize(cfg_.OptimizationIterations / 2);
-      std::cout<<"performing global SE-Sync"<<std::endl;
-      SE_Sync_global();
+      //iteration = keyframegraph_.optimize(cfg_.OptimizationIterations / 2);
+      //std::cout<< "local map iteration no 1: " << iteration <<std::endl;
+      //auto start = std::chrono::high_resolution_clock::now();
+      SE_Sync_global_kf();
+      /*auto finish = std::chrono::high_resolution_clock::now();
+      std::ofstream timefile("/home/xi/time.txt",std::ios::out | std::ios::app);
+      timefile << keyframegraph_.vertices().size() << " " << keyframegraph_.edges().size() << " " << std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count() << std::endl;
+      timefile.close();*/
 
       if(cfg_.OptimizationRemoveOutliers)
       {
@@ -666,14 +628,15 @@ private:
         if(removed > 0)
         {
           //keyframegraph_.initializeOptimization();
-          std::cout<<"performing global SE-Sync"<<std::endl;
-          SE_Sync_global();
+          SE_Sync_global_kf();
         }
       }
 
-      //keyframegraph_.optimize(cfg_.OptimizationIterations / 2);
+      //iteration = keyframegraph_.optimize(cfg_.OptimizationIterations / 2);
+      //std::cout<< "local map iteration no 2: " << iteration <<std::endl;
+      //SE_Sync_global();
 
-      //// update keyframe database
+      // update keyframe database
       updateKeyframePosesFromGraph();
 
       sw_opt.stopAndPrint();
@@ -953,13 +916,13 @@ private:
     //m->optimize();
     g2o::SparseOptimizer &g = m->getGraph();
 
-     // Write vertex to .g2o file
+    // Write vertex to .g2o file
     //if (keyframes_.size())
     if (g.vertices().size())
     {
       //std::cout << std::endl << std::endl << std::endl << std::endl;
       std::cout << "current local map number:" << keyframes_.size()+1 << std::endl;
-      std::cout<<"performing local SE-Sync"<<std::endl;
+      //std::cout<<"performing local SE-Sync"<<std::endl;
       SE_Sync_local(g);
 
       /*std::ofstream g2o_file;
@@ -1351,7 +1314,7 @@ private:
     g2o_file.close();
     //std::cout<<"finish writing .g2o file"<<std::endl;
 
-    system("/home/xi/SE-Sync/C++/build/bin/SE-Sync /home/xi/vertex.g2o");
+    system("/home/xi/SE-Sync/C++/build/bin/SE-Sync /home/xi/vertex.g2o time");
 
     // reset estimate value of vertices
     //std::cout<<"start reseting estimate value"<<std::endl;
@@ -1397,6 +1360,132 @@ private:
     }
     pose_file.close();
   }
+
+  void SE_Sync_global_kf()
+  {
+    std::ofstream g2o_file;
+    g2o_file.open("/home/xi/vertex_kf.g2o");
+    double vertex_pose[7];
+    double edge_pose[7];
+    bool abandon = false;
+    g2o::EdgeSE3::InformationType edge_information;
+    for(g2o::OptimizableGraph::VertexIDMap::iterator iter = keyframegraph_.vertices().begin(); iter != keyframegraph_.vertices().end(); ++iter)
+    {
+      if (iter->first > FirstOdometryId) continue;
+      g2o::VertexSE3 *it = (g2o::VertexSE3 *) iter->second;
+      g2o_file << "VERTEX_SE3:QUAT" << " " << iter->first - 1 << " ";
+      it->getEstimateData(vertex_pose);
+      for(size_t i=0;i<7;++i)
+      {
+        g2o_file<<vertex_pose[i]<<" ";
+      }
+      g2o_file<<std::endl;
+    }
+    g2o_file<<std::endl;
+    for(g2o::OptimizableGraph::EdgeSet::iterator iter = keyframegraph_.edges().begin(); iter != keyframegraph_.edges().end(); ++iter)
+    {
+      g2o::EdgeSE3* it = (g2o::EdgeSE3*) (*iter);
+      std::stringstream vertices_id;
+      for(g2o::HyperGraph::VertexContainer::iterator i = (it->vertices()).begin(); i != (it->vertices()).end(); ++i)
+      {
+        if((*i)->id() > FirstOdometryId){
+          abandon = true;
+          break;
+        }
+        vertices_id << (*i)->id() - 1 << " ";
+      }
+      
+      if(abandon){
+        abandon = false;
+        continue;
+      }
+
+      g2o_file << "EDGE_SE3:QUAT" << " " << vertices_id.str();
+      it->getMeasurementData(edge_pose);
+      for(size_t i=0;i<7;++i)
+      {
+        g2o_file<<edge_pose[i]<<" ";
+      }
+      edge_information = it->information();
+      for(size_t i=0;i<edge_information.rows();++i)
+        for(size_t j=i;j<edge_information.cols();++j)
+          g2o_file<<edge_information(i,j)<<" ";
+      g2o_file<<std::endl;
+    }
+    g2o_file.close();
+    //std::cout<<"finish writing .g2o file"<<std::endl;
+
+    system("/home/xi/SE-Sync/C++/build/bin/SE-Sync /home/xi/vertex_kf.g2o");
+
+    //g2o_file << "VERTEX_SE3:QUAT" << " " << (iter->first > FirstOdometryId ? iter->first - FirstOdometryId : keyframe_id_map[iter->first] ) << " ";
+
+    // reset estimate value of vertices
+    //std::cout<<"start reseting estimate value"<<std::endl;
+    std::ifstream pose_file;
+    std::string line;
+    int line_num = 1;
+    double vertex_pose_opt[7];
+    g2o::VertexSE3* v;
+    Eigen::Affine3d T_opt_to_initial;
+    Eigen::Affine3d T_unopt_to_opt;
+    int frame_id;
+
+    //double check[7];
+
+    pose_file.open("/home/xi/SE-Sync/C++/build/bin/poses_traj.txt");
+    //std::cout<<"start circulation"<<std::endl;
+    while(line_num <= keyframe_id_map.size()){
+      getline(pose_file, line);
+      std::stringstream s(line);
+      for(size_t i=0;i<7;++i){
+        s >> vertex_pose_opt[i];
+      }
+
+      v = (g2o::VertexSE3*) (keyframegraph_.vertices())[line_num];
+
+      if (line_num == 1) {
+        Eigen::Affine3d r(Eigen::Quaterniond(vertex_pose_opt[6],vertex_pose_opt[3],vertex_pose_opt[4],vertex_pose_opt[5]));
+        Eigen::Affine3d t(Eigen::Translation3d(Eigen::Vector3d(vertex_pose_opt[0],vertex_pose_opt[1],vertex_pose_opt[2])));
+        T_opt_to_initial = v->estimate() * (t * r).inverse();
+      }
+      
+      Eigen::Affine3d r(Eigen::Quaterniond(vertex_pose_opt[6],vertex_pose_opt[3],vertex_pose_opt[4],vertex_pose_opt[5]));
+      Eigen::Affine3d t(Eigen::Translation3d(Eigen::Vector3d(vertex_pose_opt[0],vertex_pose_opt[1],vertex_pose_opt[2])));
+      T_unopt_to_opt = (t * r) * (v->estimate()).inverse();
+      
+      v->setEstimate(internal::toIsometry(T_opt_to_initial * (t * r)));
+
+      frame_id = keyframe_id_map[line_num] + 1 + FirstOdometryId;
+      while((keyframegraph_.vertices()).count(frame_id)){
+        v = (g2o::VertexSE3*) (keyframegraph_.vertices())[frame_id];
+        v->setEstimate(internal::toIsometry(T_opt_to_initial * T_unopt_to_opt * v->estimate()));
+        frame_id++;
+      }
+
+
+      /*if(id_keyframe_map.count(line_num-1)) v = (g2o::VertexSE3*) (keyframegraph_.vertices())[id_keyframe_map[line_num-1]];
+      else v = (g2o::VertexSE3*) (keyframegraph_.vertices())[line_num-1+FirstOdometryId];
+
+      Eigen::Affine3d r(Eigen::Quaterniond(vertex_pose_opt[6],vertex_pose_opt[3],vertex_pose_opt[4],vertex_pose_opt[5]));
+      Eigen::Affine3d t(Eigen::Translation3d(Eigen::Vector3d(vertex_pose_opt[0],vertex_pose_opt[1],vertex_pose_opt[2])));
+      pose_opt = t * r;
+
+      if (line_num == 1) {
+        trans = v->estimate() * pose_opt.inverse();
+      }
+      
+      v->setEstimate(internal::toIsometry(trans * pose_opt));
+      /*v->getEstimateData(check);
+      for(size_t i=0;i<7;++i)
+      {
+        std::cout<<check[i]<<" ";
+      }
+      std::cout<<std::endl;*/
+
+      line_num++;
+    }
+    pose_file.close();
+  } 
 
   KeyframePtr active_;
   tbb::concurrent_bounded_queue<LocalMap::Ptr> new_keyframes_;
@@ -1460,7 +1549,6 @@ void KeyframeGraph::finalOptimization()
 {
   impl_->finalOptimization();
 }
-
 
 void KeyframeGraph::addMapChangedCallback(const KeyframeGraph::MapChangedCallback& callback)
 {

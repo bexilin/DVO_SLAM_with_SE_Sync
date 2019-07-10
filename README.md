@@ -44,7 +44,7 @@ mean		0.044009	0.107513	0.044359	0.040974	0.043515	0.043172	0.045947	0.044506
 ### Runtime
 Implementation (4) is the only one that clearly excels original g2o optimization in overall RMSE value, but actually it's impractical to run because of runtime. In the figure shown below, it can be seen that the runtime of SE-Sync grows apparantly as number of measurements increases, while g2o runtime remains almost no change. To solve this problem, we try to perform SE-Sync only on keyframes each time, and use optimized keyframes to approximately optimize frames, which is what implementation (7) and (8) do. Since numbers of keyframes and measurements between them are much fewer and grow much slower, the runtime is comparable to g2o and could be improved further. However, the optimization results show no overall improvement over g2o in these cases. 
 
-![alt text](https://raw.githubusercontent.com/bexilin/DVO_SLAM_with_SE_Sync/master/runtime comparison.png)
+![alt text](https://raw.githubusercontent.com/bexilin/DVO_SLAM_with_SE_Sync/master/runtime_comparison.png)
 
 ## Conclusion
 Our project discover two problems of SE-Sync when trying to use it to perform pose-graph optimization in DVO SLAM. Firstly, it's vulnerable to outliers. Thus, it needs to be robustified before it could be used practically. Secondly, its runtime grows apparently as the graph size increases. By performing it only on keyframes, the graph size remains small and the runtime is acceptable, but the optimization results are also compromised and not better original one in general. In conclusion, we think that currently SE-Sync is not a better choice than g2o in pose-graph optimization.

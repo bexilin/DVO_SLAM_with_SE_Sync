@@ -31,8 +31,7 @@ fr3_long_o	0.022960	0.025396	0.025765	0.026022	0.026432	0.024961	0.025914	0.0260
 
 mean		0.044009	0.107513	0.044359	0.040974	0.043515	0.043172	0.045947	0.044506
 ```
-
-		
+```	
 (1):original g2o optimization
 (2):replace all g2o with SE-Sync, add SE-Sync after step 3)
 (3):replace g2o with SE-Sync in step 1) 
@@ -41,3 +40,4 @@ mean		0.044009	0.107513	0.044359	0.040974	0.043515	0.043172	0.045947	0.044506
 (6):replace g2o with SE-Sync in step 1), add SE-Sync after step 3)
 (7):replace all global SE-Sync in (4) with global SE-Sync on keyframes
 (8):replace all global SE-Sync but that after step 3) in (4) with global SE-Sync on keyframes
+```

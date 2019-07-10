@@ -14,7 +14,9 @@ Thus in our experiment, we try several ways to incorperate SE-Sync into DVO SLAM
 ### optimization
 RMSE of absolute trajectory error on some TUM sequences are shown here for evaluation. 
 
-		      (1)		    (2)		    (3)		    (4)		    (5)		    (6)		    (7)		    (8)	
+```
+implementation	(1)		(2)		(3)		(4)		(5)		(6)		(7)		(8)
+
 fr1_360		0.091643	0.231445	0.094439	0.071950	0.095184	0.095479	0.110079	0.104853
 fr1_desk	0.022747	0.021713	0.022802	0.022565	0.021726	0.021726	0.021765	0.021972
 fr1_desk2	0.027864	0.028452	0.028676	0.026995	0.029616	0.030655	0.029381	0.028833
@@ -28,6 +30,7 @@ fr2_dishes	0.052436	0.623265	0.051506	0.052474	0.051997	0.052141	0.054243	0.0535
 fr3_long_o	0.022960	0.025396	0.025765	0.026022	0.026432	0.024961	0.025914	0.026080
 
 mean		0.044009	0.107513	0.044359	0.040974	0.043515	0.043172	0.045947	0.044506
+```
 
 		
 (1):original g2o optimization

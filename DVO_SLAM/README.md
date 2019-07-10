@@ -30,7 +30,24 @@ This part of code originated from kinetic-devel branch from DVO SLAM repository 
 
 NOTE: compilation problem appears when cmake version is 3.14. Compilation succeeds with cmake version 3.10.
 
-To build this part of code, you should initialize a catkin workspace first, and put packages dvo_core, dvo_ros, dvo_slam, and dvo_benchmark under directory src. Then go back to Catkin workspace's root folder and execute  
+Before you begin to compile, some codes need to be modified first, they are all within dvo_slam/src/keyframe_graph.cpp, in the functions SE_Sync_local(), SE_Sync_global() and SE_Sync_global_kf(). Here takes SE_Sync_local() for example, and you should do similar things to SE_Sync_global() and SE_Sync_global_kf().
+
+You should modify the path of g2o file below to a valid path on your computer, and use that path in SE-Sync codes. (See readme in SE-Sync directory for instruction)
+```
+g2o_file.open("/home/xi/vertex.g2o");
+```
+
+The first argument should be modifed to your path of SE-Sync executable, and the second one is path of g2o_file, the same as above
+```
+system("/home/xi/SE-Sync/C++/build/bin/SE-Sync /home/xi/vertex.g2o");
+```
+
+Similarly, modifying the path to pose file, which is generated in the same directory as SE-Sync executable.
+```
+pose_file.open("/home/xi/SE-Sync/C++/build/bin/poses_traj.txt");
+```
+
+Then, to build this part of code, you should initialize a catkin workspace first, and put packages dvo_core, dvo_ros, dvo_slam, and dvo_benchmark under directory src. Then go back to Catkin workspace's root folder and execute  
 
 ```
 catkin_make -DCMAKE_BUILD_TYPE=Release

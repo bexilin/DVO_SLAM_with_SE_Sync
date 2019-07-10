@@ -49,8 +49,11 @@ Our project discover two problems of SE-Sync when trying to use it to perform po
 
 ## References
 [1] Rosen, David M, Luca Carlone, Afonso S Bandeira, and John J Leonard. “SE-Sync: A Certifiably Correct Algorithm for Synchronization over the Special Euclidean Group.” The International Journal of Robotics Research 38, no. 2–3 (March 2019): 95–125. doi:10.1177/0278364918784361.
+
 [2] R. Kümmerle, G. Grisetti, H. Strasdat, K. Konolige and W. Burgard, "G2o: A general framework for graph optimization," 2011 IEEE International Conference on Robotics and Automation, Shanghai, 2011, pp. 3607-3613. doi: 10.1109/ICRA.2011.5979949
+
 [3] C. Kerl, J. Sturm and D. Cremers, "Dense visual SLAM for RGB-D cameras," 2013 IEEE/RSJ International Conference on Intelligent Robots and Systems, Tokyo, 2013, pp. 2100-2106. doi: 10.1109/IROS.2013.6696650
+
 [4] J. Sturm, N. Engelhard, F. Endres, W. Burgard and D. Cremers, "A benchmark for the evaluation of RGB-D SLAM systems," 2012 IEEE/RSJ International Conference on Intelligent Robots and Systems, Vilamoura, 2012, pp. 573-580.
 doi: 10.1109/IROS.2012.6385773
 

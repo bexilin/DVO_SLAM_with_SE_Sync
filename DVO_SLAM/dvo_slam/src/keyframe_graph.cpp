@@ -1314,7 +1314,7 @@ private:
     g2o_file.close();
     //std::cout<<"finish writing .g2o file"<<std::endl;
 
-    system("/home/xi/SE-Sync/C++/build/bin/SE-Sync /home/xi/vertex.g2o time");
+    system("/home/xi/SE-Sync/C++/build/bin/SE-Sync /home/xi/vertex.g2o");
 
     // reset estimate value of vertices
     //std::cout<<"start reseting estimate value"<<std::endl;

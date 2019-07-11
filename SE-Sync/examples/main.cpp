@@ -91,10 +91,10 @@ int main(int argc, char **argv) {
       poses_file << std::endl;
     }
     poses_file.close();
-    string filename2 = "/home/xi/SE-Sync/C++/build/bin/poses_xhat.txt";
+    /*string filename2 = "/home/xi/SE-Sync/C++/build/bin/poses_xhat.txt";
     //cout << "Saving final poses to file: " << filename2 << endl;
     ofstream poses_file2(filename2);
     poses_file2 << results.xhat;
-    poses_file2.close();
+    poses_file2.close();*/
   }
 }

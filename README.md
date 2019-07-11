@@ -49,6 +49,9 @@ Implementation (4) is the only one that clearly excels original g2o optimization
 ## Conclusion
 Our project discover two problems of SE-Sync when trying to use it to perform pose-graph optimization in DVO SLAM. Firstly, it's vulnerable to outliers. Thus, it needs to be robustified before it could be used practically. Secondly, its runtime grows apparently as the graph size increases. By performing it only on keyframes, the graph size remains small and the runtime is acceptable, but the optimization results are also compromised and not better original one in general. In conclusion, we think that currently SE-Sync is not a better choice than g2o in pose-graph optimization.
 
+## Installation
+Because this project is only done experimentally, we didn't combine DVO SLAM and SE-Sync into one project, and they need to be compiled seperately. For more instructions, please read the readme documents in directory DVO_SLAM and SE-Sync.
+
 ## References
 [1] Rosen, David M, Luca Carlone, Afonso S Bandeira, and John J Leonard. “SE-Sync: A Certifiably Correct Algorithm for Synchronization over the Special Euclidean Group.” The International Journal of Robotics Research 38, no. 2–3 (March 2019): 95–125. doi:10.1177/0278364918784361.
 

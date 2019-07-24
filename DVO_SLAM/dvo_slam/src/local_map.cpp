@@ -37,7 +37,7 @@ namespace dvo_slam
 namespace internal
 {
 
-Eigen::Isometry3d toIsometry(const Eigen::Affine3d &pose)
+Eigen::Isometry3d toIsometry(const Eigen::Affine3d& pose)
 {
   Eigen::Isometry3d p(pose.rotation());
   p.translation() = pose.translation();
@@ -45,7 +45,7 @@ Eigen::Isometry3d toIsometry(const Eigen::Affine3d &pose)
   return p;
 }
 
-static Eigen::Affine3d toAffine(const Eigen::Isometry3d &pose)
+static Eigen::Affine3d toAffine(const Eigen::Isometry3d& pose)
 {
   Eigen::Affine3d p(pose.rotation());
   p.translation() = pose.translation();
@@ -65,12 +65,13 @@ struct LocalMapImpl
 
   dvo_slam::TrackingResultEvaluation::ConstPtr evaluation_;
 
-  LocalMapImpl(const dvo::core::RgbdImagePyramid::Ptr &keyframe, const dvo::core::AffineTransformd &keyframe_pose) : keyframe_(keyframe),
-                                                                                                                     keyframe_vertex_(0),
-                                                                                                                     previous_vertex_(0),
-                                                                                                                     current_vertex_(0),
-                                                                                                                     max_vertex_id_(1),
-                                                                                                                     max_edge_id_(1)
+  LocalMapImpl(const dvo::core::RgbdImagePyramid::Ptr& keyframe, const dvo::core::AffineTransformd& keyframe_pose) :
+    keyframe_(keyframe),
+    keyframe_vertex_(0),
+    previous_vertex_(0),
+    current_vertex_(0),
+    max_vertex_id_(1),
+    max_edge_id_(1)
   {
     // g2o setup
     // graph_.setAlgorithm(
@@ -93,13 +94,13 @@ struct LocalMapImpl
     keyframe_vertex_->setEstimate(toIsometry(keyframe_pose));
   }
 
-  g2o::VertexSE3 *addFrameVertex(const ros::Time &timestamp)
+  g2o::VertexSE3* addFrameVertex(const ros::Time& timestamp)
   {
-    g2o::VertexSE3 *frame_vertex = new g2o::VertexSE3();
+    g2o::VertexSE3* frame_vertex = new g2o::VertexSE3();
     frame_vertex->setId(max_vertex_id_++);
     frame_vertex->setUserData(new Timestamped(timestamp));
 
-    if (!graph_.addVertex(frame_vertex))
+    if(!graph_.addVertex(frame_vertex))
     {
       throw std::runtime_error("failed to add vertex to g2o graph!");
     }
@@ -107,11 +108,11 @@ struct LocalMapImpl
     return frame_vertex;
   }
 
-  g2o::EdgeSE3 *addTransformationEdge(g2o::VertexSE3 *from, g2o::VertexSE3 *to, const dvo::core::AffineTransformd &transform, const dvo::core::Matrix6d &information)
+  g2o::EdgeSE3* addTransformationEdge(g2o::VertexSE3 *from, g2o::VertexSE3 *to, const dvo::core::AffineTransformd& transform, const dvo::core::Matrix6d& information)
   {
     assert(from != 0 && to != 0);
 
-    g2o::EdgeSE3 *edge = new g2o::EdgeSE3();
+    g2o::EdgeSE3* edge = new g2o::EdgeSE3();
     edge->setId(max_edge_id_++);
     edge->resize(2);
     edge->setVertex(0, from);
@@ -127,13 +128,14 @@ struct LocalMapImpl
 
 } /* namespace internal */
 
-LocalMap::Ptr LocalMap::create(const dvo::core::RgbdImagePyramid::Ptr &keyframe, const dvo::core::AffineTransformd &keyframe_pose)
+LocalMap::Ptr LocalMap::create(const dvo::core::RgbdImagePyramid::Ptr& keyframe, const dvo::core::AffineTransformd& keyframe_pose)
 {
   LocalMap::Ptr result(new LocalMap(keyframe, keyframe_pose));
   return result;
 }
 
-LocalMap::LocalMap(const dvo::core::RgbdImagePyramid::Ptr &keyframe, const dvo::core::AffineTransformd &keyframe_pose) : impl_(new internal::LocalMapImpl(keyframe, keyframe_pose))
+LocalMap::LocalMap(const dvo::core::RgbdImagePyramid::Ptr& keyframe, const dvo::core::AffineTransformd& keyframe_pose) :
+    impl_(new internal::LocalMapImpl(keyframe, keyframe_pose))
 {
 }
 
@@ -151,24 +153,24 @@ dvo::core::RgbdImagePyramid::Ptr LocalMap::getCurrentFrame()
   return impl_->current_;
 }
 
-void LocalMap::getCurrentFramePose(dvo::core::AffineTransformd &current_pose)
+void LocalMap::getCurrentFramePose(dvo::core::AffineTransformd& current_pose)
 {
   current_pose = getCurrentFramePose();
 }
 
-void LocalMap::setKeyframePose(const dvo::core::AffineTransformd &keyframe_pose)
+void LocalMap::setKeyframePose(const dvo::core::AffineTransformd& keyframe_pose)
 {
   impl_->keyframe_vertex_->setEstimate(internal::toIsometry(keyframe_pose));
 
-  g2o::OptimizableGraph::EdgeSet &edges = impl_->keyframe_vertex_->edges();
+  g2o::OptimizableGraph::EdgeSet& edges = impl_->keyframe_vertex_->edges();
 
-  for (g2o::OptimizableGraph::EdgeSet::iterator it = edges.begin(); it != edges.end(); ++it)
+  for(g2o::OptimizableGraph::EdgeSet::iterator it = edges.begin(); it != edges.end(); ++it)
   {
-    g2o::EdgeSE3 *e = (g2o::EdgeSE3 *)(*it);
+    g2o::EdgeSE3 *e = (g2o::EdgeSE3*)(*it);
 
     assert(e->vertex(0) == impl_->keyframe_vertex_);
 
-    g2o::VertexSE3 *v = (g2o::VertexSE3 *)e->vertex(1);
+    g2o::VertexSE3 *v = (g2o::VertexSE3*)e->vertex(1);
     v->setEstimate(impl_->keyframe_vertex_->estimate() * e->measurement());
   }
 }
@@ -178,12 +180,12 @@ dvo::core::AffineTransformd LocalMap::getCurrentFramePose()
   return internal::toAffine(impl_->current_vertex_->estimate());
 }
 
-g2o::SparseOptimizer &LocalMap::getGraph()
+g2o::SparseOptimizer& LocalMap::getGraph()
 {
   return impl_->graph_;
 }
 
-void LocalMap::setEvaluation(dvo_slam::TrackingResultEvaluation::ConstPtr &evaluation)
+void LocalMap::setEvaluation(dvo_slam::TrackingResultEvaluation::ConstPtr& evaluation)
 {
   impl_->evaluation_ = evaluation;
 }
@@ -193,19 +195,19 @@ dvo_slam::TrackingResultEvaluation::ConstPtr LocalMap::getEvaluation()
   return impl_->evaluation_;
 }
 
-void LocalMap::addFrame(const dvo::core::RgbdImagePyramid::Ptr &frame)
+void LocalMap::addFrame(const dvo::core::RgbdImagePyramid::Ptr& frame)
 {
   impl_->current_ = frame;
   impl_->previous_vertex_ = impl_->current_vertex_;
   impl_->current_vertex_ = impl_->addFrameVertex(ros::Time(frame->timestamp()));
 }
 
-void LocalMap::addOdometryMeasurement(const dvo::core::AffineTransformd &pose, const dvo::core::Matrix6d &information)
+void LocalMap::addOdometryMeasurement(const dvo::core::AffineTransformd& pose, const dvo::core::Matrix6d& information)
 {
   impl_->addTransformationEdge(impl_->previous_vertex_, impl_->current_vertex_, pose, information);
 }
 
-void LocalMap::addKeyframeMeasurement(const dvo::core::AffineTransformd &pose, const dvo::core::Matrix6d &information)
+void LocalMap::addKeyframeMeasurement(const dvo::core::AffineTransformd& pose, const dvo::core::Matrix6d& information)
 {
   impl_->addTransformationEdge(impl_->keyframe_vertex_, impl_->current_vertex_, pose, information);
   impl_->current_vertex_->setEstimate(impl_->keyframe_vertex_->estimate() * internal::toIsometry(pose));

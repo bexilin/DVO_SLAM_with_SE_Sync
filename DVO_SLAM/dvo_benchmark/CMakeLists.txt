@@ -8,7 +8,7 @@ find_package(catkin REQUIRED COMPONENTS roscpp dvo_core dvo_ros dvo_slam cv_brid
 find_package(cmake_modules REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(G2O REQUIRED)
-#find_package(OpenCV REQUIRED)
+find_package(OpenCV 3 REQUIRED)
 
 LIST(APPEND CMAKE_CXX_FLAGS "-std=c++11")
 

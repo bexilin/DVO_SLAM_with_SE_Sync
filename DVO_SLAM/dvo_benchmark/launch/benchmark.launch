@@ -32,7 +32,7 @@
     <param type="bool" name="show_groundtruth" value="false" />
     <param type="bool" name="keep_alive" value="$(arg keep_alive)" />
     
-    <param type="bool" name="render_video" value="false" />
+    <param type="bool" name="render_video" value="true" />
     <param type="string" name="video_folder" value="$(arg video_folder)" />
     
     <param type="string" name="camera_file" value="$(arg camera_file)" />

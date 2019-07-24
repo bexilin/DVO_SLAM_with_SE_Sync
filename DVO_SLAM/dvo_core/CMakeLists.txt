@@ -8,7 +8,7 @@ find_package(PCL REQUIRED COMPONENTS common filters)
 find_package(Eigen3 REQUIRED)
 find_package(sophus REQUIRED)
 find_package(Boost REQUIRED COMPONENTS thread)
-#find_package(OpenCV 3 REQUIRED)
+find_package(OpenCV 3 REQUIRED)
 find_package(TBB REQUIRED)
 
 catkin_package(
@@ -16,6 +16,8 @@ catkin_package(
   LIBRARIES dvo_core dvo_visualization
   DEPENDS OpenCV PCL
 )
+
+
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse -msse2 -msse3 -msse4 -ftree-vectorize")
 
@@ -64,3 +66,4 @@ add_library(dvo_visualization
 target_link_libraries(dvo_visualization
   dvo_core
 )
+

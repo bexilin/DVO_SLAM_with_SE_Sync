@@ -313,7 +313,7 @@ public:
 
     // Write vertex to .g2o file 
     /*std::ofstream g2o_file;
-    g2o_file.open("/home/xi/vertex.g2o");
+    g2o_file.open("/home/dingyi/vertex.g2o");
     double vertex_pose[7];
     double edge_pose[7];
     g2o::EdgeSE3::InformationType edge_information;
@@ -364,7 +364,7 @@ public:
     /*g2o_file.close();
     std::cout<<"finish writing .g2o file"<<std::endl;
 
-    system("/home/xi/SE-Sync/C++/build/bin/SE-Sync /home/xi/vertex.g2o");
+    system("/home/dingyi/SE-Sync/build/bin/SE-Sync /home/dingyi/vertex.g2o");
 
     // reset estimate value of vertices
     std::cout<<"start reseting estimate value"<<std::endl;
@@ -380,9 +380,9 @@ public:
     Eigen::Affine3d trans;
     double check[7];
 
-    pose_file.open("/home/xi/SE-Sync/C++/build/bin/poses_traj.txt");
-    timestamp_file.open("/home/xi/timestamp.txt");
-    trajectory_file.open("/home/xi/SE-Sync_trajectory");
+    pose_file.open("/home/dingyi/SE-Sync/build/bin/poses_traj.txt");
+    timestamp_file.open("/home/dingyi/timestamp.txt");
+    trajectory_file.open("/home/dingyi/SE-Sync_trajectory");
     //std::cout<<"start circulation"<<std::endl;
     while(line_num <= keyframegraph_.vertices().size()){
       getline(pose_file, line);
@@ -622,7 +622,7 @@ private:
       //auto start = std::chrono::high_resolution_clock::now();
       SE_Sync_global_kf();
       /*auto finish = std::chrono::high_resolution_clock::now();
-      std::ofstream timefile("/home/xi/time.txt",std::ios::out | std::ios::app);
+      std::ofstream timefile("/home/dingyi/time.txt",std::ios::out | std::ios::app);
       timefile << keyframegraph_.vertices().size() << " " << keyframegraph_.edges().size() << " " << std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count() << std::endl;
       timefile.close();*/
 
@@ -931,7 +931,7 @@ private:
       SE_Sync_local(g);
 
       /*std::ofstream g2o_file;
-      g2o_file.open("/home/xi/vertex_local.g2o");
+      g2o_file.open("/home/dingyi/vertex_local.g2o");
       double vertex_pose[7];
       double edge_pose[7];
 
@@ -988,7 +988,7 @@ private:
       /*std::cout<<"finish writing .g2o file"<<std::endl;
 
       // Call SE-Sync to optimize local map
-      system("/home/xi/SE-Sync/C++/build/bin/SE-Sync /home/xi/vertex_local.g2o");
+      system("/home/dingyi/SE-Sync/build/bin/SE-Sync /home/dingyi/vertex_local.g2o");
 
       // reset estimate value of vertices
       std::cout<<"start reseting estimate value"<<std::endl;
@@ -1006,7 +1006,7 @@ private:
 
       double check[7];
 
-      pose_file.open("/home/xi/SE-Sync/C++/build/bin/poses_traj.txt");
+      pose_file.open("/home/dingyi/SE-Sync/build/bin/poses_traj.txt");
       std::cout<<"start circulation"<<std::endl;
       while(line_num <= g.vertices().size()){
         getline(pose_file, line);
@@ -1168,7 +1168,7 @@ private:
   void SE_Sync_local(g2o::SparseOptimizer &g)
   {
     std::ofstream g2o_file;
-    g2o_file.open("/home/xi/vertex_local.g2o");
+    g2o_file.open("/home/dingyi/vertex_local.g2o");
     double vertex_pose[7];
     double edge_pose[7];
 
@@ -1221,7 +1221,7 @@ private:
     //std::cout<<"finish writing .g2o file"<<std::endl;
 
     // Call SE-Sync to optimize local map
-    system("/home/xi/SE-Sync/C++/build/bin/SE-Sync /home/xi/vertex_local.g2o");
+    system("/home/dingyi/SE-Sync/build/bin/SE-Sync /home/dingyi/vertex_local.g2o");
 
     // reset estimate value of vertices
     //std::cout<<"start reseting estimate value"<<std::endl;
@@ -1235,7 +1235,7 @@ private:
 
     //double check[7];
 
-    pose_file.open("/home/xi/SE-Sync/C++/build/bin/poses_traj.txt");
+    pose_file.open("/home/dingyi/SE-Sync/build/bin/poses_traj.txt");
     //std::cout<<"start circulation"<<std::endl;
     while(line_num <= g.vertices().size()){
       getline(pose_file, line);
@@ -1279,7 +1279,7 @@ private:
   void SE_Sync_global()
   {
     std::ofstream g2o_file;
-    g2o_file.open("/home/xi/vertex.g2o");
+    g2o_file.open("/home/dingyi/vertex.g2o");
     double vertex_pose[7];
     double edge_pose[7];
     g2o::EdgeSE3::InformationType edge_information;
@@ -1319,7 +1319,7 @@ private:
     g2o_file.close();
     //std::cout<<"finish writing .g2o file"<<std::endl;
 
-    system("/home/xi/SE-Sync/C++/build/bin/SE-Sync /home/xi/vertex.g2o");
+    system("/home/dingyi/SE-Sync/build/bin/SE-Sync /home/dingyi/vertex.g2o");
 
     // reset estimate value of vertices
     //std::cout<<"start reseting estimate value"<<std::endl;
@@ -1333,7 +1333,7 @@ private:
 
     //double check[7];
 
-    pose_file.open("/home/xi/SE-Sync/C++/build/bin/poses_traj.txt");
+    pose_file.open("/home/dingyi/SE-Sync/build/bin/poses_traj.txt");
     //std::cout<<"start circulation"<<std::endl;
     while(line_num <= keyframegraph_.vertices().size()){
       getline(pose_file, line);
@@ -1369,7 +1369,7 @@ private:
   void SE_Sync_global_kf()
   {
     std::ofstream g2o_file;
-    g2o_file.open("/home/xi/vertex_kf.g2o");
+    g2o_file.open("/home/dingyi/vertex_kf.g2o");
     double vertex_pose[7];
     double edge_pose[7];
     bool abandon = false;
@@ -1420,7 +1420,7 @@ private:
     g2o_file.close();
     //std::cout<<"finish writing .g2o file"<<std::endl;
 
-    system("/home/xi/SE-Sync/C++/build/bin/SE-Sync /home/xi/vertex_kf.g2o");
+    system("/home/dingyi/SE-Sync/build/bin/SE-Sync /home/dingyi/vertex_kf.g2o");
 
     //g2o_file << "VERTEX_SE3:QUAT" << " " << (iter->first > FirstOdometryId ? iter->first - FirstOdometryId : keyframe_id_map[iter->first] ) << " ";
 
@@ -1437,7 +1437,7 @@ private:
 
     //double check[7];
 
-    pose_file.open("/home/xi/SE-Sync/C++/build/bin/poses_traj.txt");
+    pose_file.open("/home/dingyi/SE-Sync/build/bin/poses_traj.txt");
     //std::cout<<"start circulation"<<std::endl;
     while(line_num <= keyframe_id_map.size()){
       getline(pose_file, line);

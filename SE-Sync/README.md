@@ -7,7 +7,7 @@ A detailed description of the algorithm and its implementation can be found in [
 ## Installation
 Before compiling SE-Sync, you should modify a place in example/main.cpp.
 
-You should change the file name to the path of SE—Sync optimized pose file on your computer, which is the same path as SE-Sync executable
+You should change the file name to the path of SE-Sync optimized pose file on your computer, which is the same path as SE-Sync executable
 ```
 string filename = "/home/xi/SE-Sync/C++/build/bin/poses_traj.txt";
 ```

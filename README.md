@@ -1,7 +1,7 @@
 # DVO_SLAM_with_SE_Sync
 
 ## Description of the Project
-SE-Sync, proposed by D. Rosen et al.[1], is claimed to provide certifiably globally optimial sulutions for synchronization over Special Eucliden Group, which can be used in the pose-graph optimization of SLAM systems. We want to investigate its performance over g2o[2], a widely used library for graph optimization, on SLAM tasks.  
+SE-Sync, proposed by D. Rosen et al.[1], is claimed to be a certifiably correct algorithm for synchronization over Special Eucliden Group and provide globally optimal solution if exists, which can be used in the pose-graph optimization of SLAM systems. We want to investigate its performance over g2o[2], a widely used library for graph optimization, on SLAM tasks.  
 
 Our work is based on DVO SLAM[3], a SLAM system that originally utilizes g2o library in its back-end pose-graph optimization. We replace g2o codes with SE-Sync, evaluate the performance of modified DVO SLAM on some sequences in TUM dataset[4], and do a comparison with the results of original DVO SLAM. Our work is summarized in the following section. 
 
